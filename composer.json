@@ -1,0 +1,17 @@
+{
+	"name": "icms/icms-core",
+	"description": "The Laravel Framework.",
+	"keywords": ["cms"],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Yogy Phang Wijaya",
+			"email": "yogyphang@gmail.com"
+		}
+	],
+	"autoload": {
+		"psr-4": {
+			"ICMS\\": "src/icms"
+		}
+	}
+}
