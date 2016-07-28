@@ -1,5 +1,1 @@
-@extends('layouts.base')
-
-@section('content')
-sasas <h2>FKASOF</h2>
-@endsection
+@extends('layouts.base.admin')

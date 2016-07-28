@@ -18,9 +18,11 @@ class Kernel extends ConsoleKernel
 		Package\PackageEnableCommand::class,
 		Package\PackageInstallCommand::class,
 		Package\PackageListCommand::class,
+		Package\PackagePublishCommand::class,
 		Theme\ThemeActiveCommand::class,
 		Theme\ThemeCreateCommand::class,
 		Theme\ThemeListCommand::class,
+		Widget\WidgetCreateCommand::class,
 	];
 
 	/**

@@ -8,7 +8,7 @@ class PackageDisableCommand extends Command {
 
 	protected $signature = "package:disable";
 
-	protected $description = "List iCMS Package";
+	protected $description = "Disable iCMS Package";
 
 	public function handle()
 	{

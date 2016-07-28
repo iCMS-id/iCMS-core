@@ -4,11 +4,10 @@ Route::get('/', ['as' => 'app.home', 'uses' => 'HomeController@index']);
 
 Route::group(['prefix' => 'admin'], function () {
 	Route::get('/', ['uses' => 'AdminController@index', 'as' => 'admin.home']);
-	Route::get('home/{address}', function ($address) {
-		return $address;
-	});
 
-	Route::any('apps/{path}', ['as' => 'admin.apps', 'uses' => 'PackageController@admin'])->where('path', '(.*)');;
+	Route::get('posts', ['uses' => 'PostsController@index', 'as' => 'admin.posts']);
+
+	Route::get('apps', ['uses' => 'AppsController@index', 'as' => 'admin.apps']);
 });
 
-Route::any('apps/{path}', ['as' => 'apps', 'uses' => 'PackageController@handle'])->where('path', '(.*)');
+Route::get('apps', ['uses' => 'HomeController@apps', 'as' => 'apps']);

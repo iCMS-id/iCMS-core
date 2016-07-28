@@ -8,7 +8,7 @@ class PackageInstallCommand extends Command {
 
 	protected $signature = "package:install";
 
-	protected $description = "List iCMS Package";
+	protected $description = "Install Package";
 
 	public function handle()
 	{

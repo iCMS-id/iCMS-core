@@ -76,6 +76,11 @@ class ThemeManager {
 		return File::put($path, json_encode($content));
 	}
 
+	public function createTheme($name, $slug, $desc, $author, $email)
+	{
+		//
+	}
+
 	public function createLink($theme_name)
 	{
 		$meta = $this->getMeta($theme_name);
@@ -85,11 +90,13 @@ class ThemeManager {
 
 		foreach ($publish as $keys => $publis)
 		{
-			$process = new Process("ln -s " . $path . $keys . " " . $publis);
+			if ($publis == 'vendors') continue;			//Should throw new Exception
+
+			$process = new Process("ln -s " . $path . $keys . " " . $publis, $public);
 			$process->run();
 		}
 
-		return false;
+		return true;
 	}
 
 	public function removeLink($theme_name)
@@ -105,7 +112,7 @@ class ThemeManager {
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 	public function activeTheme($theme_name)

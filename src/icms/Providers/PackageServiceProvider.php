@@ -3,13 +3,14 @@
 namespace ICMS\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use ICMS\Console\Package\PackageCreateCommand;
+use ICMS\Package\PackageManager;
 
 class PackageServiceProvider extends ServiceProvider {
 
 	public function boot()
 	{
-		//Do Nothing
+		$this->app['package.manager']->detectPackageByPath();
+		$this->app['package.manager']->registerPackageMenu();
 	}
 
 	public function register()
@@ -19,10 +20,9 @@ class PackageServiceProvider extends ServiceProvider {
 		});
 	}
 
-	public function providers()
+	public function provides()
 	{
 		return [
-			// 'package.create',
 			'package.manager'
 		];
 	}

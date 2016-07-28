@@ -3,6 +3,7 @@
 namespace ICMS\Console\Package;
 
 use Illuminate\Console\Command;
+use Package;
 
 class PackageListCommand extends Command {
 
@@ -12,6 +13,9 @@ class PackageListCommand extends Command {
 
 	public function handle()
 	{
+		$header = ["X", "Name", "Slug", "Description"];
+		$packages = Package::getAllPackages();
+		
 		$this->info("Gome");
 	}
 }
