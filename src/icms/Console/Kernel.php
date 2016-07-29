@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
 		Theme\ThemeActiveCommand::class,
 		Theme\ThemeCreateCommand::class,
 		Theme\ThemeListCommand::class,
-		Widget\WidgetCreateCommand::class,
+		// Widget\WidgetCreateCommand::class,
 	];
 
 	/**

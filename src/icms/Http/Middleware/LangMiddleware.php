@@ -20,7 +20,6 @@ class LangMiddleware {
 			return redirect($lang . "\\" . $request->path());
 		}
 		
-		
 		return $next($request);
 	}
 }

@@ -3,6 +3,8 @@
 namespace ICMS\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Http\Response;
+use Redirect;
 
 class Kernel extends HttpKernel
 {
@@ -51,4 +53,30 @@ class Kernel extends HttpKernel
         'guest' => \ICMS\Http\Middleware\RedirectIfAuthenticated::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
     ];
+
+    public function handle($request)
+    {
+        $response = parent::handle($request);
+        $redirect = $this->checkLangRoute($request);
+        if ($redirect === false) {
+            return $response;
+        }
+
+        return $redirect;
+    }
+
+    protected function checkLangRoute($request)
+    {
+        $lang = $this->app['config']['app.locale'];
+        $path = $request->path();
+        list($lang_url) = explode('/', $path);
+
+        if (strlen($lang_url) != 2) {
+            return Redirect::to($lang . '/' . $path);
+        } else {
+            $this->app['config']->set('app.locale', $lang_url);
+        }
+
+        return false;
+    }
 }

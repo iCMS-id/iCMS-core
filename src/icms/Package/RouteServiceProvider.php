@@ -37,5 +37,7 @@ class RouteServiceProvider extends ServiceProvider{
 				});
 			});
 		}
+
+		// dd($this->app['router']->getRoutes());
 	}
 }

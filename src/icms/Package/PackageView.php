@@ -14,12 +14,12 @@ class PackageView {
 		$this->package = $package;
 	}
 
-	public function makeView($view, $data = [])
+	public function makeView($view, $data = [], $title = null)
 	{
 		$is_admin = $this->isAdminPath();
 
 		if (! is_null($path = $this->normalizePath($view))) {
-			$data = $this->app['view']->file($path, $data)->render();
+			$view = $this->app['view']->file($path, $data)->render();
 
 			if ($is_admin) {
 				$template = $this->app['view']->make($this->app['config']['icms.template.admin']);
@@ -27,7 +27,8 @@ class PackageView {
 				$template = $this->app['view']->make($this->app['config']['icms.template.web']);
 			}
 
-			$template->getFactory()->inject('content', $data);
+			$template->getFactory()->inject('content', $view);
+			$template->getFactory()->inject('title', $title);
 
 			return $template;
 		}
@@ -37,7 +38,7 @@ class PackageView {
 
 	public function normalizePath($view)
 	{
-		$view = str_replace('/', '.', $view);
+		$view = str_replace('.', '/', $view);
 		$file = $this->app['files'];
 		$paths = $this->package->views;
 
@@ -54,6 +55,7 @@ class PackageView {
 
 	public function resolveViewPath($path, $view)
 	{
+		$this->app['view']->addLocation($this->package->path . '/' . $path);
 		return $this->package->path . '/' . $path . '/' . $view . '.blade.php';
 	}
 

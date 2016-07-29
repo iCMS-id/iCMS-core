@@ -29,6 +29,20 @@ class PackageManager {
 		return $this->package_path;
 	}
 
+	public function getPackageByName($name)
+	{
+		$package = $this->getAllPackages();
+
+		foreach ($package as $pack)
+		{
+			if ($pack->name == $name) {
+				return $pack;
+			}
+		}
+
+		return null;
+	}
+
 	public function detectPackageByPath()
 	{
 		$result = [];
@@ -89,9 +103,15 @@ class PackageManager {
 		return $data;
 	}
 
-	public function resolveUrl($package, $path)
+	protected function resolveUrl($package, $path)
 	{
-		return route('admin.apps') . '/' . $package->slug . '/' . $path;
+		$x = $this->app['request']->path();
+		list($lang) = explode('/', $x);
+
+		if (strlen($lang) !=2)
+			$lang = $this->app['config']['app.locale'];
+		
+		return route('admin.apps', ['lang' => $lang]) . '/' . $package->slug . '/' . $path;
 	}
 
 	public function getAllPackages($active_only = false)
@@ -171,9 +191,9 @@ class PackageManager {
 		return $this->packageAsset->resolveAsset($path);
 	}
 
-	public function view($view, $data = [])
+	public function view($view, $data = [], $title = null)
 	{
-		return $this->packageView->makeView($view, $data);
+		return $this->packageView->makeView($view, $data, $title);
 	}
 
 	public function enablePackage($packages)

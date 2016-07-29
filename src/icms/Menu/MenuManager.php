@@ -2,6 +2,8 @@
 
 namespace ICMS\Menu;
 
+use Illuminate\Support\Str;
+
 class MenuManager {
 	protected $app;
 	protected $view;
@@ -65,12 +67,20 @@ class MenuManager {
 		{
 			if (is_array($value)) {
 				$child = $this->resolveView($value);
-				$result .= $this->view->make($this->parent, ['link' => $menu, 'child' => $child])->render();
+				$active = $this->isActive($child)?'active':'';
+				$result .= $this->view->make($this->parent, ['active' => $active,'link' => $menu, 'child' => $child])->render();
 			} else {
 				$result .= $this->view->make($this->child, ['link' => $menu, 'url' => $value])->render();
 			}
 		}
 
 		return $result;
+	}
+
+	public function isActive($child)
+	{
+		$path = $this->app['request']->path();
+
+		return Str::contains($child, $path);
 	}
 }
