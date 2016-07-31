@@ -81,6 +81,6 @@ class MenuManager {
 	{
 		$path = $this->app['request']->path();
 
-		return Str::contains($child, $path);
+		return Str::contains($child, $path . "\"");
 	}
 }

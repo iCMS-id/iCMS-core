@@ -13,5 +13,8 @@
 		"psr-4": {
 			"ICMS\\": "src/icms"
 		}
+	},
+	"require": {
+		"vlucas/phpdotenv": "~2.2"
 	}
 }

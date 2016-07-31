@@ -32,6 +32,7 @@
 		</div>
 
 		<link rel="stylesheet" type="text/css" href="{{ asset('css/custom.min.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
 		<script type="text/javascript" src="{{ asset('js/icheck.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('js/custom.min.js') }}"></script>
 	</body>

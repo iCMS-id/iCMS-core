@@ -3,6 +3,8 @@
 namespace ICMS\Package;
 
 use File;
+use Dotenv\Dotenv;
+use Dotenv\Exception\InvalidPathException;
 
 class PackageManager {
 	protected $app;
@@ -62,15 +64,25 @@ class PackageManager {
 		foreach ($allpackage as $package)
 		{
 			if ($slug == $package->slug) {
+				$this->setPackage($package);
+				$this->setEnvironmentPath($package->path);
+
 				foreach ($package->providers as $provider) {
 					$this->app->register($provider);
 				}
-
-				$this->setPackage($package);
 			}
 		}
 
 		return true;
+	}
+
+	public function setEnvironmentPath($path)
+	{
+		$this->app->useEnvironmentPath($path);
+
+		(new Dotenv($this->app->environmentPath()))->overload();
+
+		$this->app->bootstrapWith(['Illuminate\Foundation\Bootstrap\LoadConfiguration']);
 	}
 
 	public function registerPackageMenu()
@@ -159,7 +171,7 @@ class PackageManager {
 		//
 	}
 
-	public function readJSON($path, $to_array = false)
+	protected function readJSON($path, $to_array = false)
 	{
 		if (File::exists($path)) {
 			return json_decode(File::get($path), $to_array);

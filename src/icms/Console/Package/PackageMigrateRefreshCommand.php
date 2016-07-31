@@ -12,6 +12,7 @@ class PackageMigrateRefreshCommand extends Command {
 	public function fire()
 	{
 		$package = Package::getPackageByName($this->argument('package name'));
+		Package::setEnvironmentPath($package->path);
 
 		if (is_null($package)) {
 			$this->error('Package Name Not Found.');

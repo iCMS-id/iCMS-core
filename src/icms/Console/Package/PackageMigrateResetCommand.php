@@ -20,6 +20,8 @@ class PackageMigrateResetCommand extends Command {
 	public function fire()
 	{
 		$package = Package::getPackageByName($this->argument('package name'));
+		Package::setEnvironmentPath($package->path);
+		
 		$database_path = str_replace($this->laravel->basePath().'/', null, $package->path . '/database/migrations');
 		$migration_files = $this->laravel['files']->glob($package->path . '/database/migrations/*');
 
