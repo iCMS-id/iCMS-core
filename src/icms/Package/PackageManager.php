@@ -45,6 +45,12 @@ class PackageManager {
 		return null;
 	}
 
+	public function route($route_name, $data = [])
+	{
+		$data = array_merge($data, ['lang' => $this->app['config']['app.locale']]);
+		return route($route_name, $data);
+	}
+
 	public function detectPackageByPath()
 	{
 		$result = [];

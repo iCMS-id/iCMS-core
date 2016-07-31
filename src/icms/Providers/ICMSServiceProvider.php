@@ -44,7 +44,7 @@ class ICMSServiceProvider extends ServiceProvider {
 			return new \ICMS\Console\Package\PackageMakeModelCommand($app['files']);
 		});
 		$this->app->singleton('package.migration', function ($app) {
-			return new \ICMS\Console\Package\PackageMigrateCommand();
+			return new \ICMS\Console\Package\PackageMigrateCommand($app['migrator']);
 		});
 		$this->app->singleton('package.migration.reset', function ($app) {
 			return new \ICMS\Console\Package\PackageMigrateResetCommand($app['migrator']);

@@ -2,24 +2,46 @@
 namespace ICMS\Console\Package;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Migrations\Migrator;
 use Package;
 
 class PackageMigrateCommand extends Command {
 	protected $signature = 'package:migrate {package name}';
 	protected $description = 'Package Migrate Command';
+	protected $migrator;
+
+	public function __construct(Migrator $migrator)
+	{
+		parent::__construct();
+		$this->migrator = $migrator;
+	}
 
 	public function fire()
 	{
 		$package = Package::getPackageByName($this->argument('package name'));
-		Package::setEnvironmentPath($package->path);
 
 		if (is_null($package)) {
 			$this->error('Package Name Not Found.');
 			return;
 		}
 
-		$database_path = str_replace($this->laravel->basePath().'/', null, $package->path . '/database/migrations');
+		Package::setEnvironmentPath($package->path);
 
-		$this->call('migrate', ['--path' => $database_path]);
+		$database_path = str_replace($this->laravel->basePath().'/', null, $package->path . '/database/migrations');
+		$migrations = $this->laravel['files']->glob($package->path . '/database/migrations/*');
+
+		foreach ($migrations as $key => $file) {
+			$migrations[$key] = $this->laravel['files']->name($file);
+		}
+
+		sort($migrations);
+		$this->migrator->requireFiles($database_path, $migrations);
+
+		foreach ($migrations as $migration) {
+			$instance = $this->migrator->resolve($migration);
+			$instance->up();
+
+			$this->output->writeln("<info>Migrated:</info> $migration");
+		}
 	}
 }

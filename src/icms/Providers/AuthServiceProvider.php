@@ -4,6 +4,7 @@ namespace ICMS\Providers;
 
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use ICMS\Permission\AuthManager;
 
 class AuthServiceProvider extends ServiceProvider {
 	/**
@@ -25,6 +26,10 @@ class AuthServiceProvider extends ServiceProvider {
     {
         $this->registerPolicies($gate);
 
-        //
+        $this->app->singleton('icms.auth', function ($app) use ($gate) {
+            return new AuthManager($gate, $app);
+        });
+
+        $instance = $this->app->make('icms.auth');
     }
 }

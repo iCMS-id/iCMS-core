@@ -20,28 +20,29 @@ class PackageMigrateResetCommand extends Command {
 	public function fire()
 	{
 		$package = Package::getPackageByName($this->argument('package name'));
+
+		if (is_null($package)) {
+			$this->error('Package Name Not Found.');
+			return;
+		}
+
 		Package::setEnvironmentPath($package->path);
 		
 		$database_path = str_replace($this->laravel->basePath().'/', null, $package->path . '/database/migrations');
-		$migration_files = $this->laravel['files']->glob($package->path . '/database/migrations/*');
+		$migrations = $this->laravel['files']->glob($package->path . '/database/migrations/*');
 
-		foreach ($migration_files as $key => $file) {
-			$migration_files[$key] = $this->laravel['files']->name($file);
+		foreach ($migrations as $key => $file) {
+			$migrations[$key] = $this->laravel['files']->name($file);
 		}
 
-		$migrations = $this->migrator->getRepository()->getRan();
+		rsort($migrations);
+		$this->migrator->requireFiles($database_path, $migrations);
 		
 		foreach ($migrations as $migration) {
-			if (in_array($migration, $migration_files)) {
-				$this->migrator->requireFiles($database_path, [$migration]);
+			$instance = $this->migrator->resolve($migration);
+			$instance->down();
 
-				$instance = $this->migrator->resolve($migration);
-				$instance->down();
-
-				$this->migrator->getRepository()->delete((object) ['migration' => $migration]);
-
-				$this->output->writeln("<info>Rolled back:</info> $migration");
-			}
+			$this->output->writeln("<info>Rolled back:</info> $migration");
 		}
 	}
 }
