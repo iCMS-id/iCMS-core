@@ -34,6 +34,9 @@ class ICMSServiceProvider extends ServiceProvider {
 
 	public function registerSingleton()
 	{
+		$this->app->singleton('package.db.seed', function ($app) {
+			return new \ICMS\Console\Package\PackageSeedCommand($app['db'], $app['files']);
+		});
 		$this->app->singleton('package.make.migration', function ($app) {
 			return new \ICMS\Console\Package\PackageMakeMigrateCommand($app['files']);
 		});
@@ -56,6 +59,7 @@ class ICMSServiceProvider extends ServiceProvider {
 
 	public function registerCommand()
 	{
+		$this->commands('package.db.seed');
 		$this->commands('package.make.controller');
 		$this->commands('package.make.migration');
 		$this->commands('package.make.model');
