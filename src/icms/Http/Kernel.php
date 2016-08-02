@@ -8,6 +8,9 @@ use Redirect;
 
 class Kernel extends HttpKernel
 {
+    protected $except = [
+        'images/*'
+    ];
     /**
      * The application's global HTTP middleware stack.
      *
@@ -71,10 +74,24 @@ class Kernel extends HttpKernel
         $path = $request->path();
         list($lang_url) = explode('/', $path);
 
+        if ($this->isExcepted($path)) {
+            return false;
+        }
+
         if (strlen($lang_url) != 2) {
             return Redirect::to($lang . '/' . $path);
         } else {
             $this->app['config']->set('app.locale', $lang_url);
+        }
+
+        return false;
+    }
+
+    protected function isExcepted($path)
+    {
+        foreach ($this->except as $except) {
+            if (fnmatch($except, $path))
+                return true;
         }
 
         return false;

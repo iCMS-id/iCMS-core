@@ -1,9 +1,9 @@
 <?php
 namespace ICMS\Http\Controllers;
 
-class AppController extends Controller {
+class PostController extends Controller {
 	public function index()
 	{
-		return ;
+		return;
 	}
 }
