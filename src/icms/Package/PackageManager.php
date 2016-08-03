@@ -45,12 +45,6 @@ class PackageManager {
 		return null;
 	}
 
-	public function route($route_name, $data = [])
-	{
-		$data = array_merge($data, ['lang' => $this->app['config']['app.locale']]);
-		return route($route_name, $data);
-	}
-
 	public function detectPackageByPath()
 	{
 		$result = [];
@@ -212,6 +206,12 @@ class PackageManager {
 	public function view($view, $data = [], $title = null)
 	{
 		return $this->packageView->makeView($view, $data, $title);
+	}
+
+	public function route($route_name, $data = [])
+	{
+		$data = array_merge($data, ['lang' => $this->app['config']['app.locale']]);
+		return route($route_name, $data);
 	}
 
 	public function enablePackage($packages)

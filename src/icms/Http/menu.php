@@ -1,7 +1,7 @@
 <?php 
 
 return [
-	'<i class="fa fa-home"></i> Dashboard' => route('admin.home', ['lang' => 'id']),
+	'<i class="fa fa-home"></i> Dashboard' => resolveRoute('admin.home'),
 	'<i class="fa fa-newspaper-o"></i> Posts' => '#',
 	'<i class="fa fa-file"></i> Page' => '#',
 	'<i class="fa fa-calendar"></i> Events' => [
@@ -18,6 +18,6 @@ return [
 	'<i class="fa fa-cogs"></i> Settings' => [
 		'Application' => '#',
 		'Packages' => '#',
-		'Users' => '#',
+		'Users' => resolveRoute('admin.users'),
 	],
 ];

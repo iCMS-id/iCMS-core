@@ -2,6 +2,7 @@
 namespace ICMS\Permission;
 
 use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Database\QueryException;
 use ICMS\Models\User;
 use ICSM\Models\Role;
 use ICMS\Models\Permission;
@@ -53,7 +54,12 @@ class AuthManager {
 
 	protected function defineGate()
 	{
-		$permissions = Permission::all();
+		try {
+			$permissions = Permission::all();
+		} catch (QueryException $except) {
+			return false;
+		}
+		
 
 		foreach ($permissions as $permission)
 		{

@@ -7,6 +7,9 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 
 class RouteServiceProvider extends ServiceProvider{
 
+	protected $namespace = '';
+	protected $middleware = [];
+
 	public function boot(Router $router)
 	{
 		//
@@ -15,6 +18,7 @@ class RouteServiceProvider extends ServiceProvider{
 
 	public function map(Router $router)
 	{
+		$this->registerMiddleware($router);
 		$this->mapWebRoutes($router);
 
 		//
@@ -29,7 +33,7 @@ class RouteServiceProvider extends ServiceProvider{
 			$path = $package->path;
 
 			$router->group([ 'namespace' => $this->namespace, 'middleware' => 'web', 'prefix' => '{lang?}'], function ($router) use ($slug, $path) {
-				$router->group(['prefix' => 'admin/apps/' . $slug], function ($router) use ($path) {
+				$router->group(['prefix' => 'admin/apps/' . $slug, 'middleware' => 'auth'], function ($router) use ($path) {
 					require $path . '/Http/adminroute.php';
 				});
 				$router->group(['prefix' => 'apps/' . $slug], function ($router) use ($path) {
@@ -37,7 +41,13 @@ class RouteServiceProvider extends ServiceProvider{
 				});
 			});
 		}
+	}
 
-		// dd($this->app['router']->getRoutes());
+	protected function registerMiddleware(Router $router)
+	{
+		foreach ($this->middleware as $key => $class)
+		{
+			$router->middleware($key, $class);
+		}
 	}
 }

@@ -12,7 +12,10 @@
 	"autoload": {
 		"psr-4": {
 			"ICMS\\": "src/icms"
-		}
+		},
+		"files": [
+			"src/icms/helper.php"
+		]
 	},
 	"require": {
 		"vlucas/phpdotenv": "~2.2"
