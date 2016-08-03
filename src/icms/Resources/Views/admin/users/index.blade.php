@@ -29,12 +29,13 @@
 				</div>
 				<div class="x_content">
 					<a class="btn btn-info" href="{{ resolveRoute('admin.users.add') }}"><i class="fa fa-plus"></i> Add</a>
-					<table class="table">
+					<table class="table" id="data-user">
 						<thead>
 							<tr>
 								<th>#ID</th>
 								<th>Username</th>
 								<th>E-Mail</th>
+								<th>Status</th>
 								<th>Action</th>
 							</tr>
 						</thead>
@@ -62,7 +63,7 @@
 					<div class="clearfix"></div>
 				</div>
 				<div class="x_content">
-					<a class="btn btn-info" href="{{ resolveRoute('admin.users.add') }}"><i class="fa fa-plus"></i> Add</a>
+					<a class="btn btn-info" href="{{ resolveRoute('admin.users.role.add') }}"><i class="fa fa-plus"></i> Add</a>
 					<table class="table">
 						<thead>
 							<tr>
@@ -78,4 +79,51 @@
 		</div>
 	</div>
 </div>
+
+<link rel="stylesheet" type="text/css" href="{{ asset('css/dataTables.bootstrap.min.css') }}">
+
+<script type="text/javascript" src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/dataTables.bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/dataTables.buttons.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/dataTables.responsive.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/buttons.bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{ asset('js/responsive.bootstrap.js') }}"></script>
+<script type="text/javascript">
+	$(document).ready(function () {
+		$('#data-user').DataTable({
+			serverSide: true,
+			ajax: {
+				url: "{{ resolveRoute('admin.users.ajax') }}",
+				type: "POST"
+			},
+			columns: [
+				{data: "ID"},
+				{data: "Username"},
+				{data: "Email"},
+				{
+					data: "Status",
+					className: "text-center",
+					fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
+						if (oData.Status) {
+							$(nTd).html('<i class="fa fa-check text-success"></i>');
+						} else {
+							$(nTd).html('<i class="fa fa-times text-danger"></i>');
+						}
+					}
+				},
+				{
+					data: "ID",
+					className: "text-center",
+					fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
+						var content = "<a href=\"{{ resolveRoute('admin.users.edit') }}/"+oData.ID+"\">Edit</a>";
+						content += " <a href=\"{{ resolveRoute('admin.users.delete') }}/"+oData.ID+"\">Delete</a>";
+						$(nTd).html(content);
+					}
+				}
+			],
+			responsive: false,
+			ordering: false
+		});
+	});
+</script>
 @endsection
