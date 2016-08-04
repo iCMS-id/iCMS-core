@@ -4,7 +4,7 @@ namespace ICMS\Providers;
 
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use ICMS\Permission\AuthManager;
+use ICMS\Auth\AuthManager;
 
 class AuthServiceProvider extends ServiceProvider {
 	/**
