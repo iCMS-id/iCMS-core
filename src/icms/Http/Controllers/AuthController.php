@@ -28,4 +28,18 @@ class AuthController extends Controller
 
 		return redirect()->back()->withErrors(['user' => 'Wrong username or password.']);
 	}
+
+	public function postRegister(Request $request)
+	{
+		//
+	}
+
+	public function logout()
+	{
+		if (Auth::check()) {
+			Auth::logout();
+		}
+
+		return redirect()->to(resolveRoute('app.home'));
+	}
 }

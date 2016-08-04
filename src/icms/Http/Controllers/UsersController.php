@@ -71,8 +71,31 @@ class UsersController extends Controller
 		return redirect()->to(resolveRoute('admin.users'));
 	}
 
+	public function update($id = null , Request $request)
+	{
+		$user = User::find($id);
+
+		if ($user) {
+			$user->name = $request->name;
+			$user->email = $request->email;
+			$user->is_active = $request->has('is_active');
+			$user->save();
+
+			$user->roles()->detach();
+			$user->roles()->attach($request->roles);
+		}
+
+		return redirect()->to(resolveRoute('admin.users'));
+	}
+
 	public function delete($id = null)
 	{
-		//
+		$user = User::find($id);
+
+		if ($user) {
+			$user->delete();
+		}
+
+		return redirect()->to(resolveRoute('admin.users'));
 	}
 }

@@ -1,5 +1,9 @@
 @extends('admin.base')
 
+@section('title')
+Edit User
+@endsection
+
 @section('page.title')
 Edit User
 @endsection
@@ -14,13 +18,13 @@ Edit User
 	<div class="form-group">
 		<label class="control-label col-md-3 col-sm-3 col-xs-12">Username <span class="required">*</span></label>
 		<div class="col-md-6 col-sm-6 col-xs-12">
-			<input class="form-control" type="text" name="format" maxlength="60">
+			<input class="form-control" type="text" name="name" maxlength="60" value="{{ $user->name }}">
 		</div>
 	</div>
 	<div class="form-group">
 		<label class="control-label col-md-3 col-sm-3 col-xs-12">Password <span class="required">*</span></label>
 		<div class="col-md-5 col-sm-5 col-xs-12">
-			<input class="form-control" type="text" name="format" maxlength="60" disabled="" >
+			<input class="form-control" type="text" maxlength="60" disabled="" >
 		</div>
 		<div class="col-md-1 col-sm-1 col-xs-12">
 			<button class="btn btn-success"><i class="fa fa-pencil"></i></button>
@@ -29,13 +33,13 @@ Edit User
 	<div class="form-group">
 		<label class="control-label col-md-3 col-sm-3 col-xs-12">E-Mail <span class="required">*</span></label>
 		<div class="col-md-6 col-sm-6 col-xs-12">
-			<input class="form-control" type="text" name="format" maxlength="60">
+			<input class="form-control" type="text" name="email" maxlength="60" value="{{ $user->email }}">
 		</div>
 	</div>
 	<div class="form-group">
 		<label class="control-label col-md-3 col-sm-3 col-xs-12">Activated User</label>
 		<div class="col-md-6 col-sm-6 col-xs-12">
-			<input type="checkbox" name="is_active" class="js-switch" /> 
+			<input type="checkbox" name="is_active" class="js-switch" @if($user->is_active) checked @endif/> 
 		</div>
 	</div>
 	<div class="form-group">
@@ -44,7 +48,7 @@ Edit User
 			<select multiple="" id="select-role" name="roles[]" class="form-control" required="">
 				<option></option>
 				@foreach($role as $value)
-				<option value="{{ $value->id }}">{{ $value->role }}</option>
+				<option value="{{ $value->id }}" @if($user->roles->contains('id', $value->id)) selected @endif>{{ $value->role }}</option>
 				@endforeach
 			</select>
 		</div>
