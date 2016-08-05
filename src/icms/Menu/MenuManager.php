@@ -15,9 +15,9 @@ class MenuManager {
 		$this->app = $app;
 		$this->view = $app['view'];
 		$this->menus = [];
-		$this->container = $app['config']['menu.container'];
-		$this->parent = $app['config']['menu.parent'];
-		$this->child = $app['config']['menu.child'];
+		$this->container = $app['config']['icms.menu_container.container'];
+		$this->parent = $app['config']['icms.menu_container.parent'];
+		$this->child = $app['config']['icms.menu_container.child'];
 	}
 
 	public function getMenu()

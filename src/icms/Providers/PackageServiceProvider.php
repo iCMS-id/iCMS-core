@@ -9,8 +9,7 @@ class PackageServiceProvider extends ServiceProvider {
 
 	public function boot()
 	{
-		$this->app['package.manager']->detectPackageByPath();
-		$this->app['package.manager']->registerPackageMenu();
+		$this->app['package.manager']->registerPackages();
 	}
 
 	public function register()

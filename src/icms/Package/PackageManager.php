@@ -9,21 +9,67 @@ use Dotenv\Exception\InvalidPathException;
 class PackageManager {
 	protected $app;
 	protected $package_path;
-	protected $packageView;
-	protected $packageAsset;
-	protected $current_active_package;
+	protected $current_package;
 
-	protected $listPackage;
-	protected $activePackage;
+	protected $listPackage = [];
+	protected $activePackage = [];
 
 	public function __construct($app)
 	{
 		$this->app = $app;
-		$this->listPackage = [];
-		$this->activePackage = [];
-		$this->package_path = $app['path.base'] . '/package';
-		$this->packageView = new PackageView($app, $this->current_active_package);
-		$this->packageAsset = new PackageAsset($app, $this->current_active_package);
+		$this->package_path = $app['path.base'] . '/' . $app['config']['icms.package_path'];
+		$this->scanDir();
+	}
+
+	protected function loadPackageJSON()
+	{
+		return $this->readJSON($this->package_path . '/package.json', true);
+	}
+
+	protected function scanDir()
+	{
+		$package_composers = File::glob($this->package_path . '/*/*/composer.json');
+		$package_json = $this->loadPackageJSON()['active'];
+
+		foreach ($package_composers as $json_file)
+		{
+			$json = $this->readJSON($json_file);
+			$json->path = str_replace('/composer.json', null, $json_file);
+			$package = new Package($this->app, $json);
+			
+			$this->listPackage[$package->name] = $package;
+
+			if (in_array($package->name, $package_json)) {
+				$this->activePackage[$package->name] = $package;
+			}
+		}
+	}
+
+	public function getPackages()
+	{
+		return $this->listPackage;
+	}
+
+	public function getPackage($name)
+	{
+		if (array_key_exists($name, $this->listPackage)) {
+			return $this->listPackage[$name];
+		}
+
+		return null;
+	}
+
+	public function getPackageBySlug($slug)
+	{
+		$packages = $this->getEnabled();
+
+		foreach ($packages as $package) {
+			if ($package->slug == $slug) {
+				return $package;
+			}
+		}
+
+		return null;
 	}
 
 	public function getPackagePath()
@@ -31,58 +77,38 @@ class PackageManager {
 		return $this->package_path;
 	}
 
-	public function getPackageByName($name)
+	public function getEnabled()
 	{
-		$package = $this->getAllPackages();
+		return $this->activePackage;
+	}
 
-		foreach ($package as $pack)
-		{
-			if ($pack->name == $name) {
-				return $pack;
-			}
+	public function getDisabled()
+	{
+		return array_diff($this->listPackage, $this->activePackage);
+	}
+
+	public function getCurrent()
+	{
+		return $this->current_package;
+	}
+
+	public function registerPackages()
+	{
+		$packages = $this->getEnabled();
+
+		foreach ($packages as $package) {
+			$this->registerProviders($package);
+			$this->registerMenu($package);
 		}
 
-		return null;
+		$this->detectPackage();
 	}
 
-	public function detectPackageByPath()
+	protected function registerMenu($package)
 	{
-		$result = [];
-        $preg = preg_match("/[a-zA-Z]{2}\/(admin\/apps|apps)\/([^\/]+)/", $this->app['request']->path(), $result);
+		$menus = $package->getMenu();
 
-        if ($preg == 1) {
-            $package_slug = $result[2];
-
-            $this->registerPackageBySlug($package_slug);
-        }
-	}
-
-	public function registerPackageBySlug($slug)
-	{
-		$allpackage = $this->getAllPackages(true);
-
-		foreach ($allpackage as $package)
-		{
-			if ($slug == $package->slug) {
-				$this->setPackage($package);
-				$this->setEnvironmentPath($package->path);
-
-				foreach ($package->providers as $provider) {
-					$this->app->register($provider);
-				}
-			}
-		}
-
-		return true;
-	}
-
-	public function setEnvironmentPath($path)
-	{
-		$this->app->useEnvironmentPath($path);
-
-		(new Dotenv($this->app->environmentPath()))->overload();
-
-		$this->app->bootstrapWith(['Illuminate\Foundation\Bootstrap\LoadConfiguration']);
+		$this->app['menu.manager']->registerMenu($menus, 'apps');
 	}
 
 	public function registerPackageMenu()
@@ -100,75 +126,53 @@ class PackageManager {
 		$this->app['menu.manager']->registerMenu($menus, 'apps');
 	}
 
-	public function resolveMenu($package, $arr_menu)
+	protected function registerProviders(Package $package)
 	{
-		$data = [];
+		$providers = $package->providers;
 
-		foreach ($arr_menu as $key => $menu) {
-			if (is_array($menu)) {
-				$data[$key] = $this->resolveMenu($package, $menu);
-			} else {
-				$data[$key] = $this->resolveUrl($package, $menu);
-			}
+		foreach ($providers as $provider) {
+			$this->app->register($provider);
 		}
-
-		return $data;
 	}
 
-	protected function resolveUrl($package, $path)
+	protected function detectPackage()
 	{
-		$x = $this->app['request']->path();
-		list($lang) = explode('/', $x);
+		$result = [];
+		$preg = preg_match("/[a-zA-Z]{2}\/(admin\/apps|apps)\/([^\/]+)/", $this->app['request']->path(), $result);
 
-		if (strlen($lang) !=2)
-			$lang = $this->app['config']['app.locale'];
-		
-		return route('admin.apps', ['lang' => $lang]) . '/' . $package->slug . '/' . $path;
-	}
+		if ($preg == 1) {
+			$package_slug = $result[2];
 
-	public function getAllPackages($active_only = false)
-	{
-		if (count($this->listPackage) > 0) {
-			if ($active_only) {
-				return $this->activePackage;
-			} else {
-				return $this->listPackage;
+			$package = $this->getPackageBySlug($package_slug);
+
+			if (!is_null($package)) {
+				$this->setCurrent($package);
+				$this->reloadEnv();
 			}
 		}
-
-		$list = [];
-		$activepackage = $this->readJSON($this->package_path . '/package.json', true)['active'];
-		$packages = File::glob($this->package_path . '/*/*/composer.json');
-		
-		foreach ($packages as $json_file)
-		{
-			$json = $this->readJSON($json_file);
-			$path = str_replace('/composer.json', null, $json_file);
-			
-			if (is_array($json)) {
-				$json['path'] = $path;
-			} else {
-				$json->path = $path;
-			}
-
-			$this->listPackage[] = $json;
-
-			if ($active_only) {
-				if (in_array($json->name, $activepackage)) {
-					$list[] = $json;
-					$this->activePackage[] = $json;
-				}
-			} else {
-				$list[] = $json;
-			}
-		}
-
-		return $list;
 	}
 
-	public function readMeta($vendor, $package)
+	protected function reloadEnv()
 	{
-		//
+		$package = $this->getCurrent();
+
+		$this->setEnvironmentPath($package->path);
+
+		(new Dotenv($this->app->environmentPath()))->overload();
+
+		$this->app->bootstrapWith(['Illuminate\Foundation\Bootstrap\LoadConfiguration']);
+	}
+
+	public function setCurrent($package)
+	{
+		$this->current_package = $package;
+		return $this;
+	}
+
+	protected function setEnvironmentPath($path)
+	{
+		$this->app->useEnvironmentPath($path);
+		return $this;
 	}
 
 	protected function readJSON($path, $to_array = false)
@@ -200,17 +204,22 @@ class PackageManager {
 
 	public function asset($path)
 	{
-		return $this->packageAsset->resolveAsset($path);
+		$package = $this->getCurrent();
+
+		return $package->getPackageAsset()->resolveAsset($path);
 	}
 
 	public function view($view, $data = [], $title = null)
 	{
-		return $this->packageView->makeView($view, $data, $title);
+		$package = $this->getCurrent();
+
+		return $package->getPackageView()->makeView($view, $data, $title);
 	}
 
 	public function route($route_name, $data = [])
 	{
 		$data = array_merge($data, ['lang' => $this->app['config']['app.locale']]);
+		
 		return route($route_name, $data);
 	}
 
@@ -222,24 +231,5 @@ class PackageManager {
 	public function disablePackage($packages)
 	{
 		//
-	}
-
-	public function getPackageInfo($package)
-	{
-		// return $this->current_active_package;
-	}
-
-	public function getCurrentPackage()
-	{
-		return $this->current_active_package;
-	}
-
-	public function setPackage($package)
-	{
-		$this->current_active_package = $package;
-		$this->packageView->setPackage($package);
-		$this->packageAsset->setPackage($package);
-
-		return $this;
 	}
 }

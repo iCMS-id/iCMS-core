@@ -8,7 +8,7 @@ use View;
 class ICMSServiceProvider extends ServiceProvider {
 	public function boot()
 	{
-		//Do Nothing
+		$this->registerNamespaces();
 	}
 
 	public function register()
@@ -66,5 +66,15 @@ class ICMSServiceProvider extends ServiceProvider {
 		$this->commands('package.migration');
 		$this->commands('package.migration.reset');
 		$this->commands('package.migration.refresh');
+	}
+
+	protected function registerNamespaces()
+	{
+		$configPath = __DIR__.'/../../config/icms.php';
+		
+		$this->mergeConfigFrom($configPath, 'icms');
+		$this->publishes([
+			$configPath => config_path('icms.php')
+		], 'config');
 	}
 }
