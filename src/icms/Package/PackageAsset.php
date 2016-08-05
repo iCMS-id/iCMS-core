@@ -29,11 +29,11 @@ class PackageAsset {
 		return asset('vendor/' . $this->package->name . '/' . $path);
 	}
 
-	public function publishAsset($package = null)
+	public function publishAsset()
 	{
 		$file = $this->file;
-		$dest = $this->app['path.public'] . '/vendor/' . $package->name;
-		$src = $package->assets;
+		$dest = $this->app['path.public'] . '/vendor/' . $this->package->name;
+		$src = $this->package->assets;
 
 		if (! $file->exists($dest)) {
 			$file->makeDirectory($dest, 0766, true, true);
@@ -41,7 +41,7 @@ class PackageAsset {
 
 		foreach ($src as $sr)
 		{
-			$source = $package->path . '/' . $sr;
+			$source = $this->package->path . '/' . $sr;
 
 			$this->copyAssets($source, $dest);
 		}

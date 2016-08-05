@@ -19,7 +19,7 @@ class PackageMigrateResetCommand extends Command {
 
 	public function fire()
 	{
-		$package = Package::getPackageByName($this->argument('package name'));
+		$package = Package::getPackage($this->argument('package name'));
 
 		if (is_null($package)) {
 			$this->error('Package Name Not Found.');

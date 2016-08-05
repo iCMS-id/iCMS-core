@@ -11,7 +11,7 @@ class PackageMakeMigrateCommand extends Command {
 
 	public function fire()
 	{
-		$package = Package::getPackageByName($this->argument('package name'));
+		$package = Package::getPackage($this->argument('package name'));
 		$migrate = $this->argument('migrate name');
 
 		if (is_null($package)) {

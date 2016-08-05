@@ -157,10 +157,6 @@ class PackageManager {
 		$package = $this->getCurrent();
 
 		$this->setEnvironmentPath($package->path);
-
-		(new Dotenv($this->app->environmentPath()))->overload();
-
-		$this->app->bootstrapWith(['Illuminate\Foundation\Bootstrap\LoadConfiguration']);
 	}
 
 	public function setCurrent($package)
@@ -169,9 +165,14 @@ class PackageManager {
 		return $this;
 	}
 
-	protected function setEnvironmentPath($path)
+	public function setEnvironmentPath($path)
 	{
 		$this->app->useEnvironmentPath($path);
+
+		(new Dotenv($this->app->environmentPath()))->overload();
+
+		$this->app->bootstrapWith(['Illuminate\Foundation\Bootstrap\LoadConfiguration']);
+
 		return $this;
 	}
 
@@ -186,9 +187,9 @@ class PackageManager {
 
 	public function publishAsset($package_name = null)
 	{
-		$package = $this->getAllPackages(true);
+		$packages = $this->getPackages();
 
-		foreach ($package as $pack)
+		foreach ($packages as $package)
 		{
 			if (!is_null($package_name)) {
 				if ($package_name == $pack->name) {
@@ -219,7 +220,7 @@ class PackageManager {
 	public function route($route_name, $data = [])
 	{
 		$data = array_merge($data, ['lang' => $this->app['config']['app.locale']]);
-		
+
 		return route($route_name, $data);
 	}
 

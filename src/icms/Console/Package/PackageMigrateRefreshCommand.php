@@ -13,13 +13,14 @@ class PackageMigrateRefreshCommand extends Command {
 
 	public function fire()
 	{
-		$package = Package::getPackageByName($this->argument('package name'));
-		Package::setEnvironmentPath($package->path);
+		$package = Package::getPackage($this->argument('package name'));
 
 		if (is_null($package)) {
 			$this->error('Package Name Not Found.');
 			return;
 		}
+
+		Package::setEnvironmentPath($package->path);
 
 		$this->call('package:migrate:reset', ['package name' => $package->name]);
 		$this->call('package:migrate', ['package name' => $package->name, '--seed' => $this->input->getOption('seed')]);
