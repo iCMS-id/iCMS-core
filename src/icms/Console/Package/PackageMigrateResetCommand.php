@@ -4,10 +4,11 @@ namespace ICMS\Console\Package;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Migrations\Migrator;
+use Symfony\Component\Console\Input\InputArgument;
 use Package;
 
 class PackageMigrateResetCommand extends Command {
-	protected $signature = 'package:migrate:reset {package name}';
+	protected $name = 'package:migrate:reset';
 	protected $description = 'Reset all migration package';
 	protected $migrator;
 
@@ -45,4 +46,16 @@ class PackageMigrateResetCommand extends Command {
 			$this->output->writeln("<info>Rolled back:</info> $migration");
 		}
 	}
+
+	/**
+     * Get the console command arguments.
+     *
+     * @return array
+     */
+    protected function getArguments()
+    {
+        return [
+            ['package name', InputArgument::REQUIRED, 'The name of package'],
+        ];
+    }
 }

@@ -2,6 +2,10 @@
 
 namespace ICMS\Package;
 
+use ICMS\Models\Role;
+use ICMS\Models\Permission;
+use Illuminate\Database\QueryException;
+
 class Package {
 	protected $asset;
 	protected $view;
@@ -27,6 +31,38 @@ class Package {
 	{
 		$file = require ($this->package->path . '/' . $this->package->menu);
 		$this->menu = $this->resolveMenu($this->package, $file);
+	}
+
+	public function registerRoles()
+	{
+		if (property_exists($this->package, 'roles')) {
+			$roles = $this->package->roles;
+
+			foreach ($roles as $role) {
+				$rolemodel = new Role;
+				$rolemodel->role = $role->name;
+				$rolemodel->description = $role->description;
+
+				try {
+					$rolemodel->save();
+
+					$this->registerPermission($rolemodel, $role->permissions);
+				} catch (QueryException $ex) {
+					//
+				}
+			}
+		}
+	}
+
+	protected function registerPermission($role, $permissions)
+	{
+		foreach ($permissions as $permission) {
+			$model = new Permission;
+			$model->permission = $permission->name;
+			$model->description = $permission->description;
+
+			$role->permissions()->save($model);
+		}
 	}
 
 	public function getPackageAsset()

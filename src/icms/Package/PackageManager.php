@@ -189,11 +189,14 @@ class PackageManager {
 	{
 		$packages = $this->getPackages();
 
-		foreach ($packages as $package)
+		foreach ($packages as $name => $package)
 		{
 			if (!is_null($package_name)) {
-				if ($package_name == $pack->name) {
-					return $this->packageAsset($package);
+				if ($package_name == $name) {
+					$package->getPackageAsset()->publishAsset();
+					$package->registerRoles();
+
+					return true;
 				}
 			} else {
 				$this->packageAsset->publishAsset($pack);
