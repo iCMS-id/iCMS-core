@@ -2,6 +2,8 @@
 namespace ICMS\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Event;
+use ICMS\Auth\User as UserMirror;
 
 class User extends Authenticatable {
 	/**
@@ -25,6 +27,32 @@ class User extends Authenticatable {
 	public function roles()
 	{
 		return $this->belongsToMany(Role::class);
+	}
+
+	public function attachRole($arr)
+	{
+		$this->roles()->attach($arr);
+		$this->fireEvent();
+		return $this;
+	}
+
+	public function syncRole($arr)
+	{
+		$this->roles()->sync($arr);
+		$this->fireEvent();
+		return $this;
+	}
+
+	public function detachRole($arr)
+	{
+		$this->roles()->detach($arr);
+		$this->fireEvent();
+		return $this;
+	}
+
+	protected function fireEvent()
+	{
+		Event::fire('user.role.changed', [new UserMirror($this)]);
 	}
 
 	public function hasRole($role)
@@ -57,6 +85,14 @@ class User extends Authenticatable {
 
 		static::deleting(function ($user) {
 			return ($user->id > 1);
+		});
+
+		static::deleted(function ($user) {
+			Event::fire('user.deleted', [new UserMirror($user)]);
+		});
+
+		static::created(function ($user) {
+			Event::fire('user.created', [new UserMirror($user)]);
 		});
 	}
 }

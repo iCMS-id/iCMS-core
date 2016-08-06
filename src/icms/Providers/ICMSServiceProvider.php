@@ -20,9 +20,11 @@ class ICMSServiceProvider extends ServiceProvider {
 		$this->app->register(MenuServiceProvider::class);
 		$this->app->register(PackageServiceProvider::class);
 		$this->app->register(ThemeServiceProvider::class);
+		$this->app->register(SettingServiceProvider::class);
 		$this->app->register(WidgetServiceProvider::class);
 
 		$this->registerPath();
+		$this->registerAlias();
 		$this->registerSingleton();
 		$this->registerCommand();
 	}
@@ -76,5 +78,17 @@ class ICMSServiceProvider extends ServiceProvider {
 		$this->publishes([
 			$configPath => config_path('icms.php')
 		], 'config');
+	}
+
+	protected function registerAlias()
+	{
+		$loader = \Illuminate\Foundation\AliasLoader::getInstance();
+
+		$loader->alias('Menu',		\ICMS\Facades\MenuFacade::class);
+		$loader->alias('Package',	\ICMS\Facades\PackageFacade::class);
+		$loader->alias('Users',		\ICMS\Facades\UserFacade::class);
+		$loader->alias('Setting',	\ICMS\Facades\SettingFacade::class);
+		$loader->alias('Theme',		\ICMS\Facades\ThemeFacade::class);
+		$loader->alias('Widget',	\ICMS\Facades\WidgetFacade::class);
 	}
 }

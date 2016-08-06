@@ -3,6 +3,7 @@
 namespace ICMS\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
 use ICMS\Http\Requests;
 use ICMS\Models\User;
 use ICMS\Models\Role;
@@ -28,9 +29,14 @@ class UsersController extends Controller
 		$user->password = bcrypt($request->password);
 		$user->email = $request->email;
 		$user->is_active = $request->has('is_active');
-		$user->save();
 
-		$user->roles()->attach($request->roles);
+		try {
+			$user->save();
+		} catch (QueryException $ex) {
+			return redirect()->back()->withErrors(['user' => 'Users already exists.']);
+		}
+
+		$user->attachRole($request->roles);
 
 		return redirect()->to(resolveRoute('admin.users'));
 	}
@@ -81,8 +87,7 @@ class UsersController extends Controller
 			$user->is_active = $request->has('is_active');
 			$user->save();
 
-			$user->roles()->detach();
-			$user->roles()->attach($request->roles);
+			$user->syncRole($request->roles);
 		}
 
 		return redirect()->to(resolveRoute('admin.users'));

@@ -35,7 +35,8 @@ class AuthManager {
 
 	public function getUser($id)
 	{
-		return User::findOrFail($id);
+		$user = User::findOrFail($id);
+		return new UserClass($user);
 	}
 
 	public function getRoles()
