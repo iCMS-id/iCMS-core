@@ -51,10 +51,14 @@ class AuthManager {
 		foreach ($roles as $role) {
 			$this->defineRole($role);
 
-			$permissions = $role->permissions;
+			try {
+				$permissions = $role->permissions;
 
-			foreach ($permissions as $permission) {
-				$this->definePermission($role, $permission);
+				foreach ($permissions as $permission) {
+					$this->definePermission($role, $permission);
+				}
+			} catch (QueryException $ex) {
+				//
 			}
 		}
 	}

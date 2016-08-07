@@ -52,4 +52,27 @@ class PermissionController extends Controller
 
 		return redirect()->to(resolveRotue('admin.users'));
 	}
+
+	public function ajax(Request $request)
+	{
+		$result = [];
+		$permissions = Permission::all();
+
+		$result['draw'] = $request->draw;
+		$result['recordsTotal'] = $permissions->count();
+		$result['recordsFiltered'] = $permissions->count();
+		$result['data'] = [];
+
+		$permissions = $permissions->splice($request->start ,$request->length);
+
+		foreach ($permissions as $value) {
+			$result['data'][] = [
+				'ID' => $value->id,
+				'Permission' => $value->permission,
+				'Description' => $value->description,
+			];
+		}
+
+		return response()->json($result);
+	}
 }

@@ -79,6 +79,66 @@ Users <small>Users Management</small>
 	</div>
 </div>
 
+<div class="row">
+	<div class="col-md-12 col-sm-12 col-xs-12">
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>Permissions <small>Permission list</small></h2>
+				<ul class="nav navbar-right panel_toolbox">
+					<li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
+					<li><a class="close-link"><i class="fa fa-close"></i></a></li>
+				</ul>
+				<div class="clearfix"></div>
+			</div>
+			<div class="x_content">
+				<button class="btn btn-info" id="add-permission"><i class="fa fa-plus"></i> Add</button>
+				<table class="table" id="data-permission">
+					<thead>
+						<tr>
+							<th>#ID</th>
+							<th>Permission</th>
+							<th>Description</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="modal-permission" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="myModalLabel">Tambah Permission</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="" class="form-horizontal">
+					{!! csrf_field() !!}
+					<div class="form-group">
+						<label class="control-label col-md-3 col-sm-3 col-xs-12">Permission</label>
+						<div class="col-md-6 col-sm-6 col-xs-12">
+							<input type="text" name="permission" class="form-control" required>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-3 col-sm-3 col-xs-12">Description</label>
+						<div class="col-md-9 col-sm-9 col-xs-12">
+							<textarea class="form-control" name="description"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-success" id="submit-form">Submit</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <link rel="stylesheet" type="text/css" href="{{ asset('css/dataTables.bootstrap.min.css') }}">
 
 <script type="text/javascript" src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
@@ -139,8 +199,7 @@ Users <small>Users Management</small>
 					data: "ID",
 					className: "text-center",
 					fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
-						var content = "<a href=\"{{ resolveRoute('admin.permission') }}/"+oData.ID+"\">Permission</a>";
-						content += " <a href=\"{{ resolveRoute('admin.role.edit') }}/"+oData.ID+"\">Edit</a>";
+						var content = "<a href=\"{{ resolveRoute('admin.role.edit') }}/"+oData.ID+"\">Edit</a>";
 						content += " <a href=\"{{ resolveRoute('admin.role.delete') }}/"+oData.ID+"\">Delete</a>";
 						$(nTd).html(content);
 					}
@@ -148,6 +207,38 @@ Users <small>Users Management</small>
 			],
 			responsive: false,
 			ordering: false
+		});
+
+		$('#data-permission').DataTable({
+			serverSide: true,
+			ajax: {
+				url: "{{ resolveRoute('admin.permission.ajax') }}",
+				type: "POST"
+			},
+			columns: [
+				{data: "ID"},
+				{data: "Permission"},
+				{data: "Description"},
+				{
+					data: "ID",
+					className: "text-center",
+					fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
+						var content = "<a href=\"{{ resolveRoute('admin.permission.delete') }}/"+oData.ID+"\">Delete</a>";
+						$(nTd).html(content);
+					}
+				}
+			],
+			responsive: false,
+			ordering: false
+		});
+
+		$('#modal-permission').modal({show:false});
+		$('#add-permission').click(function () {
+			$('#modal-permission').modal('show');
+		});
+
+		$('#submit-form').click(function () {
+			$('#modal-permission form').submit();
 		});
 	});
 </script>
