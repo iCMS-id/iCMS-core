@@ -42,4 +42,9 @@ class AuthController extends Controller
 
 		return redirect()->to(resolveRoute('app.home'));
 	}
+
+	public function profile()
+	{
+		return view('auth.profile');
+	}
 }

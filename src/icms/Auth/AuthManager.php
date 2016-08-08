@@ -41,12 +41,22 @@ class AuthManager {
 
 	public function getRoles()
 	{
-		return Role::all()->toArray();
+		try {
+			$roles = Role::all();
+
+			return $roles->toArray();
+		} catch (QueryException $ex) {
+			return [];
+		}
 	}
 
 	protected function defineGate()
 	{
-		$roles = Role::all();
+		try {
+			$roles = Role::all();
+		} catch (QueryException $ex) {
+			return;
+		}
 
 		foreach ($roles as $role) {
 			$this->defineRole($role);

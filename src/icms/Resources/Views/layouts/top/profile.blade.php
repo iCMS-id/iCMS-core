@@ -5,7 +5,7 @@
 	</a>
 	<ul class="dropdown-menu dropdown-usermenu pull-right">
 		<li><a href="{{ resolveRoute('admin.home') }}">Control Panel</a></li>
-		<li><a href="javascript:;"> Profile</a></li>
+		<li><a href="{{ resolveRoute('app.profile') }}"> Profile</a></li>
 		<li><a href="javascript:;">
 			<span class="badge bg-red pull-right">50%</span>
 			<span>Settings</span>

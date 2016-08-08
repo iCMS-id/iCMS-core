@@ -11,6 +11,7 @@ Route::group(['middleware' => 'guest'], function () {
 
 Route::group(['middleware' => 'auth'], function () {
 	Route::get('logout', ['as' => 'app.logout', 'uses' => 'AuthController@logout']);
+	Route::get('profile', ['as' => 'app.profile', 'uses' => 'AuthController@profile']);
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
