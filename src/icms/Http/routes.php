@@ -38,6 +38,12 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 	Route::get('permission/delete/{permission_id?}', ['uses' => 'PermissionController@delete', 'as' => 'admin.permission.delete']);
 	Route::post('permission/ajax', ['uses' => 'PermissionController@ajax', 'as' => 'admin.permission.ajax']);
 
+	require 'routes/page.php';
+	require 'routes/post.php';
+	require 'routes/event.php';
+	require 'routes/media.php';
+	require 'routes/notification.php';
+
 	Route::get('apps', ['uses' => 'AppController@index', 'as' => 'admin.apps']);
 });
 
