@@ -199,7 +199,8 @@ class PackageManager {
 					return true;
 				}
 			} else {
-				$this->packageAsset->publishAsset($pack);
+				$package->getPackageAsset()->publishAsset();
+				$package->registerRoles();
 			}
 		}
 
@@ -222,9 +223,9 @@ class PackageManager {
 
 	public function route($route_name, $data = [])
 	{
-		$data = array_merge($data, ['lang' => $this->app['config']['app.locale']]);
+		// $data = array_merge($data, ['lang' => $this->app['config']['app.locale']]);
 
-		return route($route_name, $data);
+		return resolveRoute($route_name, $data);
 	}
 
 	public function enablePackage($packages)
