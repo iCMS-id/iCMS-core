@@ -25,7 +25,7 @@ User Profile <small>Activity report</small>
 
 	<ul class="list-unstyled user_data">
 		<li><i class="fa fa-map-marker user-profile-icon"></i> San Francisco, California, USA</li>
-		<li class="m-top-xs"><i class="fa fa-external-link user-profile-icon"></i> <a href="http://www.kimlabs.com/profile/" target="_blank">www.kimlabs.com</a></li>
+		<li><i class="fa fa-external-link user-profile-icon"></i> <a href="http://www.kimlabs.com/profile/" target="_blank">www.kimlabs.com</a></li>
 	</ul>
 
 	<a class="btn btn-success"><i class="fa fa-edit m-right-xs"></i>Edit Profile</a>
