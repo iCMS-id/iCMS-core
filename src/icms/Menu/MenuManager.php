@@ -104,19 +104,11 @@ class MenuManager {
 			} else {
 
 				$child = $this->resolveView($menu);
-				$active = false;//$this->isActive($child)?'active':'';
-				$result .= $this->view->make($this->parent, ['active' => $active, 'link' => $menu->name, 'child' => $child])->render();
+				$result .= $this->view->make($this->parent, ['link' => $menu->name, 'child' => $child])->render();
 
 			}
 		}
 
 		return $result;
-	}
-
-	public function isActive($child)
-	{
-		$path = $this->app['request']->path();
-
-		return Str::contains($child, $path . "\"");
 	}
 }
