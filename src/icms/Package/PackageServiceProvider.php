@@ -14,11 +14,6 @@ class PackageServiceProvider extends ServiceProvider {
 
 	public function register()
 	{
-		$this->registerMenu();
-	}
-
-	public function registerMenu()
-	{
 		//
 	}
 }

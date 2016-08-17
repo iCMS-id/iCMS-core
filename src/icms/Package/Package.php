@@ -2,6 +2,7 @@
 
 namespace ICMS\Package;
 
+use ICMS\Models\Menu;
 use ICMS\Models\Role;
 use ICMS\Models\Permission;
 use Illuminate\Database\QueryException;
@@ -10,7 +11,7 @@ class Package {
 	protected $asset;
 	protected $view;
 	protected $package;
-	protected $menu;
+	protected $menu = [];
 	protected $app;
 
 	public function __construct($app, $package)
@@ -19,7 +20,7 @@ class Package {
 		$this->app = $app;
 		$this->view = new PackageView($app, $package);
 		$this->asset = new PackageAsset($app, $package);
-		$this->registerMenu();
+		$this->refreshMenu();
 	}
 
 	public function __get($key)
@@ -27,10 +28,42 @@ class Package {
 		return $this->package->$key;
 	}
 
-	protected function registerMenu()
+	public function registerMenu()
 	{
+		$this->deleteMenu();
+
 		$file = require ($this->package->path . '/' . $this->package->menu);
-		$this->menu = $this->resolveMenu($this->package, $file);
+		$this->resolveMenu($file);
+
+		$roots = Menu::roots()->get();
+		$parent = $roots->where('name', 'apps')->first();
+		$menus = $roots->where('package_name', $this->package->name);
+
+		foreach ($menus as $menu) {
+			$menu->makeChildOf($parent);
+		}
+
+		$this->refreshMenu();
+	}
+
+	protected function deleteMenu()
+	{
+		foreach ($this->menu as $menu) {
+			$menu->delete();
+		}
+	}
+
+	protected function refreshMenu()
+	{
+		$root = Menu::roots()->where('name', 'apps')->first();
+
+		if ($root) {
+			$descendants = $root->getDescendants(1);
+
+			if (!is_null($descendants)) {
+				$this->menu = $descendants->where('package_name', $this->package->name);
+			}
+		}
 	}
 
 	public function registerRoles()
@@ -80,29 +113,36 @@ class Package {
 		return $this->menu;
 	}
 
-	public function resolveMenu($package, $arr_menu)
+	public function resolveMenu($arr_menu, Menu $parent = null)
 	{
-		$data = [];
+		$package = $this->package;
 
 		foreach ($arr_menu as $key => $menu) {
 			if (is_array($menu)) {
-				$data[$key] = $this->resolveMenu($package, $menu);
+				$node = Menu::create(['name' => $key, 'package_name' => $package->name]);
+				$this->resolveMenu($menu, $node);
 			} else {
-				$data[$key] = $this->resolveUrl($package, $menu);
+				$node = Menu::create([
+					'name' => $key,
+					'package_name' => $package->name,
+					'options' => [
+						'type' => 'url',
+						'target' => 'self',
+						'route' => $menu
+					]
+				]);
+			}
+
+			if (!is_null($parent)) {
+				$node->makeChildOf($parent);
 			}
 		}
-
-		return $data;
 	}
 
-	protected function resolveUrl($package, $path)
-	{
-		$x = $this->app['request']->path();
-		list($lang) = explode('/', $x);
-
-		if (strlen($lang) !=2)
-			$lang = $this->app['config']['app.locale'];
+	// protected function resolveUrl($path)
+	// {
+	// 	$package = $this->package;
 		
-		return route('admin.apps', ['lang' => $lang]) . '/' . $package->slug . '/' . $path;
-	}
+	// 	return resolveRoute('admin.apps') . '/' . $package->slug . '/' . $path;
+	// }
 }

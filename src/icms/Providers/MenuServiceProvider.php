@@ -10,7 +10,7 @@ class MenuServiceProvider extends ServiceProvider {
 	
 	public function boot()
 	{
-		$this->registerMenu();
+		//
 	}
 
 	public function register()
@@ -25,11 +25,5 @@ class MenuServiceProvider extends ServiceProvider {
 		return [
 			'menu.manager'
 		];
-	}
-
-	public function registerMenu()
-	{
-		$menu = require __DIR__ . '/../Http/menu.php';
-		$this->app['menu.manager']->registerMenu($menu);
 	}
 }

@@ -98,32 +98,9 @@ class PackageManager {
 
 		foreach ($packages as $package) {
 			$this->registerProviders($package);
-			$this->registerMenu($package);
 		}
 
 		$this->detectPackage();
-	}
-
-	protected function registerMenu($package)
-	{
-		$menus = $package->getMenu();
-
-		$this->app['menu.manager']->registerMenu($menus, 'apps');
-	}
-
-	public function registerPackageMenu()
-	{
-		$menus = [];
-		$packages = $this->getAllPackages(true);
-
-		foreach ($packages as $package) {
-			$file = require ($package->path . '/' . $package->menu);
-			$menu = $this->resolveMenu($package, $file);
-			
-			$menus = array_merge($menus, $menu);
-		}
-
-		$this->app['menu.manager']->registerMenu($menus, 'apps');
 	}
 
 	protected function registerProviders(Package $package)
@@ -201,6 +178,26 @@ class PackageManager {
 			} else {
 				$package->getPackageAsset()->publishAsset();
 				$package->registerRoles();
+			}
+		}
+
+		return true;
+	}
+
+	public function publishMenu($package_name = null)
+	{
+		$packages = $this->getPackages();
+
+		foreach ($packages as $name => $package)
+		{
+			if (!is_null($package_name)) {
+				if ($package_name == $name) {
+					$package->registerMenu();
+
+					return true;
+				}
+			} else {
+				$package->registerMenu();
 			}
 		}
 
