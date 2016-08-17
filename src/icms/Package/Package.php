@@ -32,16 +32,18 @@ class Package {
 	{
 		$this->deleteMenu();
 
-		$file = require ($this->package->path . '/' . $this->package->menu);
-		$this->resolveMenu($file);
-
+		$package = $this->package;
 		$roots = Menu::roots()->get();
 		$parent = $roots->where('name', 'apps')->first();
-		$menus = $roots->where('package_name', $this->package->name);
+		$menus = require ($package->path . '/' . $package->menu);
 
-		foreach ($menus as $menu) {
+		foreach ($menus as $key => $value) {
+			$menu = Menu::create(['name' => $key, 'package_name' => $package->name]);
+			$menu->makeTree($this->resolveMenu($value));
 			$menu->makeChildOf($parent);
 		}
+
+		Menu::rebuild();
 
 		$this->refreshMenu();
 	}
@@ -115,14 +117,18 @@ class Package {
 
 	public function resolveMenu($arr_menu, Menu $parent = null)
 	{
+		$data = [];
 		$package = $this->package;
 
 		foreach ($arr_menu as $key => $menu) {
 			if (is_array($menu)) {
-				$node = Menu::create(['name' => $key, 'package_name' => $package->name]);
-				$this->resolveMenu($menu, $node);
+				$data[] = [
+					'name' => $key,
+					'package_name' => $package->name,
+					'children' => $this->resolveMenu($menu)
+				];
 			} else {
-				$node = Menu::create([
+				$data[] =[
 					'name' => $key,
 					'package_name' => $package->name,
 					'options' => [
@@ -130,13 +136,11 @@ class Package {
 						'target' => 'self',
 						'route' => $menu
 					]
-				]);
-			}
-
-			if (!is_null($parent)) {
-				$node->makeChildOf($parent);
+				];
 			}
 		}
+
+		return $data;
 	}
 
 	// protected function resolveUrl($path)
