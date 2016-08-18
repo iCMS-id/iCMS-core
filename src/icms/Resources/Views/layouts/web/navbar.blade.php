@@ -36,6 +36,19 @@
 												<li><a href="index5.html">Option 5: Portfolio</a></li>
 											</ul>
 										</div>
+										<div class="col-sm-3">
+											<h5>Home</h5>
+											<ul>
+												<li><a href="index.html">Option 1: Default Page</a></li>
+												<li><a href="index2.html">Option 2: Application</a></li>
+												<li><a href="index3.html">Option 3: Startup</a></li>
+												<li><a href="index4.html">Option 4: Agency</a></li>
+												<li><a href="index5.html">Option 5: Portfolio</a></li>
+											</ul>
+										</div>
+										<div class="col-sm-6">
+											<img src="img/template-easy-customize.png" class="img-responsive hidden-xs" alt="">
+										</div>
 									</div>
 								</div>
 							</li>
