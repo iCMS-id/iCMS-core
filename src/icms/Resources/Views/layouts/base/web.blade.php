@@ -9,19 +9,23 @@
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 
 		{!! Theme::importsTheme() !!}
+		<link rel="stylesheet" type="text/css" href="{{ asset('css/roboto.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ asset('css/owl.carousel.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ asset('css/owl.theme.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ asset('css/animate.min.css') }}">
+		<link rel="stylesheet" type="text/css" href="{{ asset('css/style.default.css') }}">
 	</head>
 	<body class="webpage">
-		@include('layouts.menu.web')
-		
-		<div class="clearfix"></div>
-
-		@section('over.content')
-		<div class="page container">
-			@yield('content')
+		<div id="all">
+			@include('layouts.web.header')
+			@include('layouts.web.carousel')
+			@include('layouts.web.content')
+			@include('layouts.web.footer')
 		</div>
-		@show
 
-		<link rel="stylesheet" type="text/css" href="{{ asset('css/custom.min.css') }}">
-		<link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
+		<script type="text/javascript" src="{{ asset('js/waypoints.min.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('js/jquery.counterup.min.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('js/owl.carousel.min.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('js/front.js') }}"></script>
 	</body>
 </html>

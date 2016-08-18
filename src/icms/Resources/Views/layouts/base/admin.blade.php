@@ -9,6 +9,7 @@
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		
 		{!! Theme::importsTheme() !!}
+		<link rel="stylesheet" type="text/css" href="{{ asset('css/custom.min.css') }}">
 	</head>
 	<body class="nav-md">
 		<div class="container body">
