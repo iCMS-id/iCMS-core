@@ -61,18 +61,27 @@ Page Management
 					<label>Type</label>
 					<select class="form-control" id="type-select">
 						<option value="apps">Apps</option>
-						<option value="posts">Posts/Events</option>
+						<option value="posts">Posts</option>
+						<option value="events">Events</option>
 						<option value="external" selected="">External</option>
 					</select>
-					<div id="posts" style="display: none;">
+
+					<div id="events">
+						<label>Events</label>
+						<select class="form-control" style="width: 100%;" id="events-select"></select>
+					</div>
+
+					<div id="posts">
 						<label>Posts</label>
 						<select class="form-control" style="width: 100%;" id="posts-select"></select>
 					</div>
+
 					<div id="external">
 						<label>Links</label>
 						<input id="fullname" class="form-control" name="fullname" placeholder="http://" required="" type="text">
 					</div>
-					<div id="apps" style="display: none;">
+
+					<div id="apps">
 						<label>Apps Name</label>
 						<select class="form-control" id="apps-select" style="width: 100%;">
 							@foreach(Package::getPackages() as $package)
@@ -80,9 +89,7 @@ Page Management
 							@endforeach
 						</select>
 						<label>Links</label>
-						<select class="form-control">
-							<option>PSB</option>
-						</select>
+						<select class="form-control" id="route-select" style="width: 100%;"></select>
 					</div>
 					<br>
 					<br>
@@ -100,14 +107,31 @@ Page Management
 		$('#type-select').select2({allowClear:false, placeholder: "Select Type"}).on('select2:select', function (evt) {
 			var data = $(this).val();
 			$('#apps').hide();
+			$('#events').hide();
 			$('#external').hide();
 			$('#posts').hide();
 
 			$('#' + data).show();
 		});
-		$('#apps-select').select2({allowClear:false, placeholder: "Select apps name"});
+		$('#apps-select').select2({allowClear:false, placeholder: "Select apps name"}).on('select2:select', function (evt) {
+			$('#route-select').val('');
+			$('#route-select').trigger('change.select2');
+		});
+		$('#events-select').select2({
+			placeholder: "Select events",
+			ajax: {
+				dataType: 'json',
+				data: function (params) {
+					return {search: params.term, page: params.page};
+				},
+				method: 'post',
+				delay: 250,
+				cache: true,
+				url: "{{ resolveRoute('admin.event.ajax') }}"
+			}
+		});
 		$('#posts-select').select2({
-			placeholder: "Select posts or events",
+			placeholder: "Select posts",
 			ajax: {
 				dataType: 'json',
 				data: function (params) {
@@ -119,6 +143,24 @@ Page Management
 				cache: true
 			}
 		});
+		$('#route-select').select2({
+			placeholder: "Select route name",
+			allowClear: true,
+			ajax: {
+				dataType: 'json',
+				data: function (params) {
+					return {search: params.term, page: params.page, apps: $('#apps-select').val()};
+				},
+				method: 'post',
+				delay: 250,
+				cache: true,
+				url: "{{ resolveRoute('admin.apps.ajax') }}"
+			}
+		});
+
+		$('#type-select').val('external');
+		$('#type-select').trigger('change.select2');
+		$('#type-select').trigger('select2:select');
 	});
 </script>
 @endsection

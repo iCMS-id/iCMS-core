@@ -17,4 +17,10 @@ class EventController extends Controller
     {
     	return 'upcomming';
     }
+
+    public function ajax(Request $request)
+    {
+    	$data = ['results' => []];
+    	return response()->json($data);
+    }
 }

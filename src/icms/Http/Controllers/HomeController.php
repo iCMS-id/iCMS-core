@@ -12,4 +12,9 @@ class HomeController extends Controller {
 	{
 		return view('app.index');
 	}
+
+	public function contact()
+	{
+		return 'contact us';
+	}
 }

@@ -11,7 +11,7 @@ class Package {
 	protected $asset;
 	protected $view;
 	protected $package;
-	protected $providesRoute;
+	protected $providesRoute = [];
 	protected $menu = [];
 	protected $app;
 
@@ -74,7 +74,7 @@ class Package {
 		foreach ($this->package->providers as $provider) {
 			$this->app->register($provider);
 
-			if ($provider instanceof PackageServiceProvider) {
+			if (get_parent_class($provider) == PackageServiceProvider::class) {
 				$this->registerProvidesRoute($provider);
 			} 
 		}
