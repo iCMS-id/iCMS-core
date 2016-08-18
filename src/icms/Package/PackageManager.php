@@ -97,19 +97,10 @@ class PackageManager {
 		$packages = $this->getEnabled();
 
 		foreach ($packages as $package) {
-			$this->registerProviders($package);
+			$package->registerProviders();
 		}
 
 		$this->detectPackage();
-	}
-
-	protected function registerProviders(Package $package)
-	{
-		$providers = $package->providers;
-
-		foreach ($providers as $provider) {
-			$this->app->register($provider);
-		}
 	}
 
 	protected function detectPackage()

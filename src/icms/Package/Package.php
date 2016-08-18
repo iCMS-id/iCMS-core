@@ -11,6 +11,7 @@ class Package {
 	protected $asset;
 	protected $view;
 	protected $package;
+	protected $providesRoute;
 	protected $menu = [];
 	protected $app;
 
@@ -68,6 +69,24 @@ class Package {
 		}
 	}
 
+	public function registerProviders()
+	{
+		foreach ($this->package->providers as $provider) {
+			$this->app->register($provider);
+
+			if ($provider instanceof PackageServiceProvider) {
+				$this->registerProvidesRoute($provider);
+			} 
+		}
+	}
+
+	protected function registerProvidesRoute($provider)
+	{
+		$this->providesRoute = $provider::getProvidesRoute();
+
+		return $this;
+	}
+
 	public function registerRoles()
 	{
 		if (property_exists($this->package, 'roles')) {
@@ -110,6 +129,11 @@ class Package {
 		return $this->view;
 	}
 
+	public function getProvidesRoute()
+	{
+		return $this->providesRoute;
+	}
+
 	public function getMenu()
 	{
 		return $this->menu;
@@ -142,11 +166,4 @@ class Package {
 
 		return $data;
 	}
-
-	// protected function resolveUrl($path)
-	// {
-	// 	$package = $this->package;
-		
-	// 	return resolveRoute('admin.apps') . '/' . $package->slug . '/' . $path;
-	// }
 }

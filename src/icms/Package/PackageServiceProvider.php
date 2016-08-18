@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 
 class PackageServiceProvider extends ServiceProvider {
 	protected $menus = [];
+	protected $providesRoute = [];
 
 	public function boot()
 	{
@@ -15,5 +16,10 @@ class PackageServiceProvider extends ServiceProvider {
 	public function register()
 	{
 		//
+	}
+
+	public static function getProvidesRoute()
+	{
+		return (new static(app()))->providesRoute;
 	}
 }
