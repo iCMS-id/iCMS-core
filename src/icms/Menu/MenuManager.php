@@ -37,6 +37,15 @@ class MenuManager {
 		return $this->menus;
 	}
 
+	public function setView($container = null, $parent = null, $child = null)
+	{
+		if (!is_null($container)) $this->container = $container;
+		if (!is_null($parent)) $this->parent = $parent;
+		if (!is_null($child)) $this->child = $child;
+
+		return $this;
+	}
+
 	public function registerMenu($menus, $group = 'admin')
 	{
 		$menu = Menu::roots()->where('name', $group)->first();

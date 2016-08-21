@@ -27,14 +27,19 @@ Page Management
 				<div class="clearfix"></div>
 			</div>
 			<div class="x_content">
-				<table class="table table-bordered">
-					<thead>
-						<tr>
-							<th>Menu</th>
-							<th>Action</th>
-						</tr>
-					</thead>
-				</table>
+<table-container
+:header="['Menu', 'Action', 'Order']"
+:class-name="['table-bordered']"
+key-name="id"
+data-src="{{ resolveRoute('admin.page.ajax') }}"
+:data-map="[
+	{key: 'Menu', value: 'menu'},
+	{key: 'Action', value: 'action'},
+	{key: 'Order', value: 'order'}
+]"
+:data-options="{ root_id: {{ $menu->id }} }">
+	<div is="menu-control" move-url="{{ resolveRoute('admin.page.move') }}"></div>
+</table-container>
 			</div>
 		</div>
 	</div>
@@ -56,14 +61,16 @@ Page Management
 			</div>
 			<div class="x_content">
 				<form class="form-horizontal form-label-left" method="post">
+					{!! csrf_field() !!}
 					<label>Menu</label>
-					<input id="fullname" class="form-control" name="fullname" required="" type="text">
+					<input class="form-control" name="name" required="" type="text">
 					<label>Type</label>
-					<select class="form-control" id="type-select">
+					<select class="form-control" id="type-select" name="type">
 						<option value="apps">Apps</option>
 						<option value="posts">Posts</option>
 						<option value="events">Events</option>
 						<option value="external" selected="">External</option>
+						<option value="empty">Empty</option>
 					</select>
 
 					<div id="events">
@@ -78,7 +85,9 @@ Page Management
 
 					<div id="external">
 						<label>Links</label>
-						<input id="fullname" class="form-control" name="fullname" placeholder="http://" required="" type="text">
+						<input class="form-control" name="external" placeholder="http://" type="text">
+						<label>Open in New Tab</label><br>
+						<input type="checkbox" name="newtab" class="js-switch">
 					</div>
 
 					<div id="apps">
@@ -101,6 +110,8 @@ Page Management
 </div>
 
 <link rel="stylesheet" type="text/css" href="{{ asset('css/select2.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('css/switchery.min.css') }}">
+<script type="text/javascript" src="{{ asset('js/switchery.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset('js/select2.full.min.js') }}"></script>
 <script type="text/javascript">
 	$(document).ready(function () {

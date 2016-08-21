@@ -37,8 +37,13 @@
 		<link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
 		<script type="text/javascript" src="{{ asset('js/icheck.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('js/custom.min.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('js/vue.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('js/main.js') }}"></script>
 		<script type="text/javascript">
 			$.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+			$(document).ready(function () {
+				var app = new Vue({ el: 'body' });
+			});
 		</script>
 	</body>
 </html>

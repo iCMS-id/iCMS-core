@@ -27,5 +27,13 @@
 		<script type="text/javascript" src="{{ asset('js/jquery.counterup.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('js/owl.carousel.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('js/front.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('js/vue.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('js/main.js') }}"></script>
+		<script type="text/javascript">
+			$.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+			$(document).ready(function () {
+				var app = new Vue({ el: 'body' });
+			});
+		</script>
 	</body>
 </html>

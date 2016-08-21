@@ -55,6 +55,7 @@ class Kernel extends HttpKernel
 		'can' => \Illuminate\Foundation\Http\Middleware\Authorize::class,
 		'guest' => \ICMS\Http\Middleware\RedirectIfAuthenticated::class,
 		'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+		'web.page' => \ICMS\Http\Middleware\WebPage::class,
 	];
 
 	public function handle($request)
