@@ -18,7 +18,6 @@
 	<body class="webpage">
 		<div id="all">
 			@include('layouts.web.header')
-			@include('layouts.web.carousel')
 			@include('layouts.web.content')
 			@include('layouts.web.footer')
 		</div>

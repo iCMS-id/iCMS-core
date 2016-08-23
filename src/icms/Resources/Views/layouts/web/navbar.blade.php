@@ -1,18 +1,19 @@
-<div class="navbar-affixed-top" data-spy="affix" data-offset-top="200">
+<div class="navbar-affixed-top">
 	<div class="navbar navbar-default yamm" role="navigation" id="navbar">
 		<div class="container">
-			<!--div class="navbar-header">
-				<a class="navbar-brand home" href="index.html">Test</a>
+			<div class="navbar-header">
+				<a class="navbar-brand home" href="index.html" style="font-size: 37px; padding-top: 21px;">Test</a>
 				<div class="navbar-buttons">
 					<button type="button" class="navbar-toggle btn-template-main" data-toggle="collapse" data-target="#navigation">
 						<span class="sr-only">Toggle navigation</span>
 						<i class="fa fa-align-justify"></i>
 					</button>
 				</div>
-			</div-->
+			</div
 
 			<div class="navbar-collapse collapse" id="navigation">
-				<ul class="nav navbar-nav">
+				{!! Menu::render('web') !!}
+				<!-- <ul class="nav navbar-nav navbar-right">
 					<li class="dropdown active">
 						<a href="javascript: void(0)" class="dropdown-toggle" data-toggle="dropdown">Home <b class="caret"></b></a>
 						<ul class="dropdown-menu">
@@ -54,7 +55,7 @@
 							</li>
 						</ul>
 					</li>
-				</ul>
+				</ul> -->
 			</div>
 		</div>
 	</div>

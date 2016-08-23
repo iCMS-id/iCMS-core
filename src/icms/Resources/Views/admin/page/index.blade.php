@@ -86,20 +86,20 @@ data-src="{{ resolveRoute('admin.page.ajax') }}"
 					<div id="external">
 						<label>Links</label>
 						<input class="form-control" name="external" placeholder="http://" type="text">
-						<label>Open in New Tab</label><br>
-						<input type="checkbox" name="newtab" class="js-switch">
 					</div>
 
 					<div id="apps">
 						<label>Apps Name</label>
-						<select class="form-control" id="apps-select" style="width: 100%;">
+						<select class="form-control" id="apps-select" style="width: 100%;" name="package_name">
 							@foreach(Package::getPackages() as $package)
 							<option value="{{ $package->name }}">{{ $package->name }}</option>
 							@endforeach
 						</select>
 						<label>Links</label>
-						<select class="form-control" id="route-select" style="width: 100%;"></select>
+						<select class="form-control" id="route-select" style="width: 100%;" name="route"></select>
 					</div>
+					<label>Open in New Tab</label><br>
+					<input type="checkbox" name="newtab" class="js-switch">
 					<br>
 					<br>
 					<button type="submit" class="btn btn-success">Submit</button>

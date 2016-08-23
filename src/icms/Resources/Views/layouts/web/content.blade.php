@@ -1,13 +1,19 @@
 @include('layouts.web.form')
-<!-- @include('layouts.web.breadcrumb') -->
 
+@if (isset($hide_breadcrumb) && $hide_breadcrumb)
+
+@else
+@include('layouts.web.breadcrumb')
+@endif
+
+@section('over.content')
 <div id="content">
 	<div class="container">
 		<div class="row">
-			@section('content')
-			@show
-			@section('over.content')
-			@show
+			<div class="col-md-12">
+				@section('content')
+				@show
+			</div>
 		</div>
 		<div class="row">
 			@include('layouts.web.leftcontent')
@@ -15,3 +21,4 @@
 		</div>
 	</div>
 </div>
+@show

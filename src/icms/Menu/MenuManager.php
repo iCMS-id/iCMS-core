@@ -10,15 +10,14 @@ class MenuManager {
 	protected $app;
 	protected $view;
 	protected $menus;
-	protected $container, $parent, $child;
+	protected $mode = 'admin';
+	protected $view_container;
 
 	public function __construct($app)
 	{
 		$this->app = $app;
 		$this->view = $app['view'];
-		$this->container = $app['config']['icms.menu_container.container'];
-		$this->parent = $app['config']['icms.menu_container.parent'];
-		$this->child = $app['config']['icms.menu_container.child'];
+		$this->view_container = $app['config']['icms.menu'];
 		$this->readModel();
 	}
 
@@ -37,11 +36,21 @@ class MenuManager {
 		return $this->menus;
 	}
 
-	public function setView($container = null, $parent = null, $child = null)
+	public function getViewContainer($container)
 	{
-		if (!is_null($container)) $this->container = $container;
-		if (!is_null($parent)) $this->parent = $parent;
-		if (!is_null($child)) $this->child = $child;
+		return $this->view_container[$this->mode][$container];
+	}
+
+	public function getMode()
+	{
+		return $this->mode;
+	}
+
+	public function setMode($mode)
+	{
+		if ($mode == 'admin' || $mode == 'web') {
+			$this->mode = $mode;
+		}
 
 		return $this;
 	}
@@ -63,6 +72,7 @@ class MenuManager {
 	public function render($group = null)
 	{
 		$view = '';
+		$container = $this->getViewContainer('container');
 
 		if (is_null($group)) {
 			foreach ($this->menus as $group => $menu)
@@ -73,47 +83,47 @@ class MenuManager {
 			$view = $this->resolveView($this->menus[$group]);
 		}
 
-		return $this->view->make($this->container, ['content' => $view])->render();
+		return $this->view->make($container, ['content' => $view])->render();
 	}
 
 	public function resolveView(Menu $menus)
 	{
 		$result = '';
+		$child = $this->getViewContainer('child');
+		$parent = $this->getViewContainer('parent');
 
 		foreach ($menus->getDescendants(1) as $menu)
 		{
 			if ($menu->isLeaf()) {
 
-				$options = $menu->options;
-
-				if (array_key_exists('route', $options)) {
+				if (!is_null($menu->route)) {
 
 					try {
 						$url = resolveRoute($menu->route);
 					} catch (InvalidArgumentException $ex) {
 						$url = '#';
 					} finally {
-						$result .= $this->view->make($this->child, ['link' => $menu->name, 'url' => $url])->render();
+						$result .= $this->view->make($child, ['link' => $menu->name, 'url' => $url])->render();
 					}
 
-				} elseif (array_key_exists('url', $options)) {
+				} elseif (!is_null($menu->url)) {
 
 					if ($menu->type == 'external') {
-						$result .= $this->view->make($this->child, ['link' => $menu->name, 'url' => $menu->url ])->render();
+						$result .= $this->view->make($child, ['link' => $menu->name, 'url' => $menu->url ])->render();
 					} else {
-						$result .= $this->view->make($this->child, ['link' => $menu->name, 'url' => url($menu->url)])->render();
+						$result .= $this->view->make($child, ['link' => $menu->name, 'url' => url($menu->url)])->render();
 					}
 
 				} else {
 
-					$result .= $this->view->make($this->child, ['link' => $menu->name, 'url' => '#'])->render();
+					$result .= $this->view->make($child, ['link' => $menu->name, 'url' => '#'])->render();
 
 				}
 
 			} else {
 
-				$child = $this->resolveView($menu);
-				$result .= $this->view->make($this->parent, ['link' => $menu->name, 'child' => $child])->render();
+				$child_data = $this->resolveView($menu);
+				$result .= $this->view->make($parent, ['link' => $menu->name, 'child' => $child_data])->render();
 
 			}
 		}

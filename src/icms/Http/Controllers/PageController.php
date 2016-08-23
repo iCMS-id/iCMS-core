@@ -19,21 +19,24 @@ class PageController extends Controller
 	{
 		$root = Menu::find($request->root_id?:2);
 		$menu = new Menu;
+		$menu->name = $request->name;
 
 		switch ($request->type) {
 			case 'external':
-				$menu->name = $request->name;
 				$menu->type = 'url';
 				$menu->url = $request->external;
-				$menu->target = $request->has('newtab')?'blank':'self';
-				$menu->save();
+				break;
+			case 'apps':
+				$menu->type = 'url';
+				$menu->package_name = $request->package_name;
+				$menu->route = $request->route;
 				break;
 			case 'empty':
-				$menu->name = $request->name;
-				$menu->save();
 				break;
 		}
 
+		$menu->target = $request->has('newtab')?'blank':'self';
+		$menu->save();
 		$menu->makeChildOf($root);
 
 		return redirect()->to(resolveRoute('admin.page', ['root_id' => $root->id]));

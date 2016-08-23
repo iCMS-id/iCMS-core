@@ -37,7 +37,7 @@ class RouteServiceProvider extends ServiceProvider{
 				$router->group(['prefix' => 'admin/apps/' . $slug, 'middleware' => 'auth'], function ($router) use ($path) {
 					require $path . '/Http/adminroute.php';
 				});
-				$router->group(['prefix' => 'apps/' . $slug], function ($router) use ($path) {
+				$router->group(['prefix' => 'apps/' . $slug, 'middleware' => 'web.page'], function ($router) use ($path) {
 					require $path . '/Http/webroute.php';
 				});
 			});

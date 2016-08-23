@@ -44,6 +44,10 @@ trait MetableTrait {
 	{
 		$meta = $this->getAttribute($this->metafield);
 
+		if (is_null($meta)) {
+			return null;
+		}
+
 		if (array_key_exists($key, $meta)) {
 			return $meta[$key];
 		}
