@@ -99,7 +99,7 @@ class PageController extends Controller
 
 				if ($value->isLeaf()) {
 					$action .= '<a class="btn btn-success btn-xs"><i class="fa fa-edit"></i> Edit</a> ';
-					$action .= '<a class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a> ';
+					$action .= '<a class="btn btn-danger btn-xs menu delete" data-id="'.$value->id.'"><i class="fa fa-trash"></i> Delete</a> ';
 				}
 
 				$data['data'][] = [
@@ -112,5 +112,40 @@ class PageController extends Controller
 		}
 
 		return response()->json($data);
+	}
+
+	public function edit($id = null)
+	{
+		$menu = Menu::find($id);
+
+		if ($menu) {
+			//
+		}
+
+		return response()->json([]);
+	}
+
+	public function update(Request $request, $id = null)
+	{
+		$menu = Menu::find($id);
+
+		if ($menu) {
+			//
+		}
+
+		return response()->json([]);
+	}
+
+	public function delete(Request $request)
+	{
+		$menu = Menu::find($request->id);
+
+		if ($menu) {
+			$menu->delete();
+
+			return response()->json(['success' => true]);
+		}
+
+		return response()->json(['success' => false]);
 	}
 }

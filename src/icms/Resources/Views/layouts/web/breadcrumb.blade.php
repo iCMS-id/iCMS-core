@@ -2,12 +2,12 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-md-6">
-				<h1>Blog</h1>
+				<h1>@yield('title','Welcome to iCMS')</h1>
 			</div>
 			<div class="col-md-6">
 				<ul class="breadcrumb">
-					<li><a href="index.html">Home</a></li>
-					<li>Blog listing: Big</li>
+					<li><a href="{{ resolveRoute('app.home') }}">Home</a></li>
+					<li>@yield('title','Welcome to iCMS')</li>
 				</ul>
 
 			</div>

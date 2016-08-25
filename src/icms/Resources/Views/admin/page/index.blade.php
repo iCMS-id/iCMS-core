@@ -38,7 +38,7 @@ data-src="{{ resolveRoute('admin.page.ajax') }}"
 	{key: 'Order', value: 'order'}
 ]"
 :data-options="{ root_id: {{ $menu->id }} }">
-	<div is="menu-control" move-url="{{ resolveRoute('admin.page.move') }}"></div>
+	<div is="menu-control" move-url="{{ resolveRoute('admin.page.move') }}" delete-url="{{ resolveRoute('admin.page.delete') }}"></div>
 </table-container>
 			</div>
 		</div>
